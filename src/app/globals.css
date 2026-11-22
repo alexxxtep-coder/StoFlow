@@ -8,3 +8,14 @@
 .auth-page{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 20% 0%,#e7edff,transparent 40%),var(--bg)}.auth-card{width:min(450px,100%);background:#fff;padding:28px;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow)}.auth-brand{font:800 23px Manrope;color:var(--ink)}.auth-brand small{display:block;font:800 9px 'DM Sans';color:#8592a4;letter-spacing:1.5px;margin-top:4px}.auth-card h1{font:800 23px Manrope;margin:26px 0 6px}.auth-card .btn{width:100%;margin-top:9px}
 @media(max-width:1100px){.app-shell{grid-template-columns:218px minmax(0,1fr)}.page-content{padding:23px 20px}.grid-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.app-shell{grid-template-columns:1fr}.sidebar{min-height:auto;padding:10px 12px;gap:8px}.brand-lockup{padding-bottom:7px}.workspace-chip,.sidebar-bottom{display:none}.nav-group{display:contents}.nav-label{display:none}.nav{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px}.nav a{padding:7px 9px;justify-content:center;flex-direction:column;gap:2px;text-align:center;font-size:9px;min-height:47px;min-width:65px;white-space:nowrap}.nav-icon{font-size:14px}.topbar{height:52px;padding:0 14px}.page-content{padding:19px 13px 28px}.page-heading{display:block}.heading-actions{margin-top:13px}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.span-2{grid-column:auto}.app-footer{padding:12px 14px;gap:10px;flex-wrap:wrap}.topbar-context{display:none}}
+
+
+/* Secondary navigation follows the nested work areas in the 5.7 reference. */
+.nav-subgroup{display:grid;gap:7px;margin-top:-10px;padding-top:13px;border-top:1px solid #26364d}
+.nav-secondary{gap:2px}
+.nav-secondary a{min-height:34px;padding:7px 12px;font-size:11px;color:#91a1b7}
+.nav-secondary a .nav-icon{font-size:13px;width:18px}
+.nav-secondary a.active{background:#233957;box-shadow:inset 2px 0 #83a5ff;color:#fff}
+@media(max-width:760px){
+  .nav-subgroup{display:none}
+}
