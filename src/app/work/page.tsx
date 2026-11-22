@@ -52,7 +52,7 @@ export default async function WorkPage({ searchParams }: {
   const canManage = ["owner", "admin", "service_manager", "service_advisor"].includes(String(ctx.role));
 
   const [{ data: orders, error: orderError }, { data: leads, error: leadError }, { data: tasks, error: taskError }] = await Promise.all([
-    ctx.supabase.from("work_orders").select("id,order_number,status,complaint,created_at,due_at,customers(name),vehicles(make,model,plate)").eq("tenant_id",ctx.tenantId).not("status","in","(completed,cancelled)").order("created_at",{ascending:false}).limit(150),
+    ctx.supabase.from("work_orders").select("id,order_number,status,complaint,created_at,planned_finish_at,customers(name),vehicles(make,model,plate)").eq("tenant_id",ctx.tenantId).not("status","in","(completed,cancelled)").order("created_at",{ascending:false}).limit(150),
     ctx.supabase.from("leads").select("id,description,status,created_at,customers(name,normalized_phone)").eq("tenant_id",ctx.tenantId).not("status","in","(converted,lost)").order("created_at",{ascending:false}).limit(100),
     ctx.supabase.from("tasks").select("id,title,status,priority,due_at,work_order_id").eq("tenant_id",ctx.tenantId).not("status","in","(done,cancelled)").order("due_at",{ascending:true}).limit(100)
   ]);
@@ -86,7 +86,7 @@ export default async function WorkPage({ searchParams }: {
             <b>{order.customers?.name ?? "Клиент не указан"}</b>
             <div className="cell-sub">{[order.vehicles?.make,order.vehicles?.model].filter(Boolean).join(" ") || "Автомобиль не указан"}{order.vehicles?.plate ? ` · ${order.vehicles.plate}` : ""}</div>
             <p>{order.complaint || "Жалоба не указана"}</p>
-            <div className="work-order-card-foot"><small>{order.due_at ? `Срок: ${formatInTimeZone(order.due_at,ctx.tenant.timezone,{dateStyle:"short"})}` : "Срок не задан"}</small><Link href={`/work/${order.id}`}>Открыть ↗</Link></div>
+            <div className="work-order-card-foot"><small>{order.planned_finish_at ? `Срок: ${formatInTimeZone(order.planned_finish_at,ctx.tenant.timezone,{dateStyle:"short"})}` : "Срок не задан"}</small><Link href={`/work/${order.id}`}>Открыть ↗</Link></div>
             {canManage && (NEXT[order.status]?.length ?? 0) > 0 ? <form action={changeOrderStatus} className="work-status-form"><input type="hidden" name="orderId" value={order.id}/><select name="status" defaultValue={NEXT[order.status][0]} aria-label="Следующий статус">{NEXT[order.status].map(next => <option key={next} value={next}>{LABELS[next] ?? next}</option>)}</select><button className="btn outline small">Перевести</button></form> : null}
           </article>) : <div className="work-column-empty">Нет заказов</div>}
         </div>;
