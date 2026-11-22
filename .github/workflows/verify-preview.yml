@@ -1,0 +1,42 @@
+name: Verify Sto.Flow Preview
+
+on:
+  push:
+    branches:
+      - preview/v0.3.1
+  pull_request:
+    branches:
+      - preview/v0.3.1
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stoflow-preview-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up Node.js
+        uses: actions/setup-node@1e60f620b9541d5c1e5a9f6a3e9c8e5a7d8f1e0a1
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Check TypeScript
+        run: npm run typecheck
+
+      - name: Check ESLint
+        run: npm run lint
