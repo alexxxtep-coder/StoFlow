@@ -31,7 +31,7 @@ export default async function SupplyPage({ searchParams }: { searchParams: Searc
 
     <section className="panel">
       <div className="eyebrow">НОВАЯ ПОТРЕБНОСТЬ</div><h2 className="panel-title" style={{ marginTop: 5 }}>Запросить деталь для заказа</h2>
-      {selectedOrder ? <div className="notice" style={{ marginTop: 10 }}>Контекст заказа: <Link href={`/work/${selectedOrder.id}`}>№{selectedOrder.order_number}</Link> · {selectedOrder.customers?.name ?? "Клиент"} · {[selectedOrder.vehicles?.make, selectedOrder.vehicles?.model].filter(Boolean).join(" ")}</div> : null}
+      {selectedOrder ? <div className="notice" style={{ marginTop: 10 }}>Контекст заказа: <Link href={`/work/${selectedOrder.id}`}>№{selectedOrder.order_number}</Link> · {one(selectedOrder.customers)?.name ?? "Клиент"} · {[one(selectedOrder.vehicles)?.make, one(selectedOrder.vehicles)?.model].filter(Boolean).join(" ")}</div> : null}
       {canRequest && orders?.length ? <form action={createPartRequest} className="form-grid">
         <label className="field">Заказ<select name="orderId" required defaultValue={selectedOrder?.id ?? ""}><option value="" disabled>Выберите заказ</option>{orders.map((order: any) => <option key={order.id} value={order.id}>№{order.order_number} · {order.customers?.name}</option>)}</select></label>
         <label className="field">Наименование детали<input name="description" required minLength={2} maxLength={240} placeholder="Передний ступичный подшипник"/></label>
@@ -88,7 +88,7 @@ export default async function SupplyPage({ searchParams }: { searchParams: Searc
   </AppShell>;
 }
 
-function money(value: number, currency: string) {
+function one<T>(value: T | T[] | null | undefined): T | null {\n  return Array.isArray(value) ? value[0] ?? null : value ?? null;\n}\nfunction money(value: number, currency: string) {
   return new Intl.NumberFormat("ru-RU", { style: "currency", currency }).format(value);
 }
 function availabilityName(value: string) {
