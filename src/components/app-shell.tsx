@@ -26,6 +26,7 @@ const secondary: Record<string, readonly (readonly [string, string, string])[]> 
     ["/analytics", "▥", "Аналитика"],
   ],
   manage: [
+    ["/manage", "♙", "Команда и услуги"],
     ["/settings", "⚙", "Настройки"],
     ["/assistant", "✧", "ИИ-помощник"],
     ["/automation", "⟳", "Автоматизация"],
