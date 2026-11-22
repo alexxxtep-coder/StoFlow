@@ -38,7 +38,7 @@ const OfferSchema = z.object({
   sku: z.string().trim().max(80).optional().default(""),
   price: z.string().trim().optional().default(""), availability: z.enum(["unknown","in_stock","limited","backorder","out_of_stock"]),
   fitment: z.enum(["unverified","confirmed","probable","not_fit"]),
-  etaAt: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional().default("")
+  etaAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).or(z.literal("")).optional().default("")
 });
 
 export async function addManualOffer(formData: FormData) {
