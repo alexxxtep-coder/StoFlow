@@ -27,6 +27,7 @@ const secondary: Record<string, readonly (readonly [string, string, string])[]> 
   ],
   manage: [
     ["/manage", "♙", "Команда и услуги"],
+    ["/flow", "▥", "Поток и WIP"],
     ["/settings", "⚙", "Настройки"],
     ["/assistant", "✧", "ИИ-помощник"],
     ["/automation", "⟳", "Автоматизация"],
@@ -38,7 +39,7 @@ const secondary: Record<string, readonly (readonly [string, string, string])[]> 
 const routeArea: Record<string, string> = {
   today: "today", work: "work", tasks: "work", schedule: "work", archive: "work",
   supply: "work", clients: "clients", money: "money", analytics: "money",
-  manage: "manage", settings: "manage", assistant: "manage", automation: "manage",
+  manage: "manage", flow: "manage", settings: "manage", assistant: "manage", automation: "manage",
   "online-booking": "manage", integrations: "manage",
 };
 
