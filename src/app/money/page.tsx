@@ -48,7 +48,7 @@ export default async function MoneyPage() {
   const out = expenses.reduce((sum: number, item: any) => sum + Number(item.amount || 0), 0);
 
   return <AppShell active="money" tenantName={ctx.tenant.name} role={ctx.role} currency={ctx.tenant.currency} timezone={ctx.tenant.timezone}>
-    <div className="page-heading"><div><div className="eyebrow">ФИНАНСОВЫЙ КОНТУР</div><h1>Финансы</h1><p className="subtitle">Поступления, расходы и финансовая история завершённых заказ-нарядов.</p></div></div>
+    <div className="page-heading"><div><div className="eyebrow">ФИНАНСОВЫЙ КОНТУР</div><h1>Финансы</h1><p className="subtitle">Поступления, расходы и финансовая история завершённых заказ-нарядов.</p></div></div><nav className="work-tabs finance-tabs" aria-label="Разделы финансов"><a href="/money" className="active" aria-current="page">Деньги и оплаты</a><a href="/analytics">Аналитика</a></nav>
 
     {canSeeFinance ? <>
       <div className={`grid ${canSeeExpenses ? "grid-3" : "grid-2"}`}>
