@@ -40,7 +40,7 @@ export default async function AnalyticsPage() {
   orders.forEach((order: any) => { statuses[order.status] = (statuses[order.status] || 0) + 1; });
 
   return <AppShell active="analytics" tenantName={ctx.tenant.name} role={ctx.role} currency={ctx.tenant.currency} timezone={ctx.tenant.timezone}>
-    <div className="page-heading"><div><div className="eyebrow">УПРАВЛЕНЧЕСКАЯ ОТЧЁТНОСТЬ</div><h1>Аналитика</h1><p className="subtitle">Сводные показатели по загруженным данным организации. Показатели ограничены последними выборками запросов.</p></div></div>
+    <div className="page-heading"><div><div className="eyebrow">УПРАВЛЕНЧЕСКАЯ ОТЧЁТНОСТЬ</div><h1>Аналитика</h1><p className="subtitle">Сводные показатели по загруженным данным организации. Показатели ограничены последними выборками запросов.</p></div></div><nav className="work-tabs finance-tabs" aria-label="Разделы финансов"><a href="/money">Деньги и оплаты</a><a href="/analytics" className="active" aria-current="page">Аналитика</a></nav>
     <QueryError title="Заказы" error={ordersResult.error}/>
     {canSeePayments ? <QueryError title="Поступления" error={paymentsResult.error}/> : null}
     {canSeeExpenses ? <QueryError title="Расходы" error={expensesResult.error}/> : null}
