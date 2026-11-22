@@ -90,7 +90,8 @@ export default async function SupplyPage({ searchParams }: { searchParams: Searc
 
 function one<T>(value: T | T[] | null | undefined): T | null {
   return Array.isArray(value) ? value[0] ?? null : value ?? null;
-}\nfunction money(value: number, currency: string) {
+}
+function money(value: number, currency: string) {
   return new Intl.NumberFormat("ru-RU", { style: "currency", currency }).format(value);
 }
 function availabilityName(value: string) {
