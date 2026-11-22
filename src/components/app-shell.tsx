@@ -3,41 +3,71 @@ import Link from "next/link";
 import { signOut } from "@/app/logout/actions";
 import { formatInTimeZone } from "@/domain/timezone.mjs";
 
+// The five primary areas mirror the 5.7 workshop prototype.
+// Secondary routes stay grouped under the same mental model.
 const groups = [
   { label: "ОСНОВНОЕ", items: [
     ["/today", "▦", "Сегодня", "today"],
     ["/work", "◉", "Работа", "work"],
-    ["/tasks", "✓", "Задачи и WIP", "tasks"],
     ["/clients", "♙", "Клиенты", "clients"],
-    ["/schedule", "▦", "Календарь", "schedule"],
-  ]},
-  { label: "БИЗНЕС", items: [
-    ["/supply", "⚙", "Снабжение · Parts.Finder", "supply"],
     ["/money", "◈", "Финансы", "money"],
-    ["/analytics", "▥", "Аналитика", "analytics"],
-  ]},
-  { label: "УПРАВЛЕНИЕ", items: [
-    ["/manage", "☷", "Команда и ресурсы", "manage"],
-    ["/settings", "⚙", "Настройки", "settings"],
+    ["/manage", "☷", "Управление", "manage"],
   ]},
 ] as const;
+
+const secondary: Record<string, readonly (readonly [string, string, string])[]> = {
+  work: [
+    ["/tasks", "✓", "Задачи"],
+    ["/schedule", "▦", "Календарь и посты"],
+    ["/archive", "▤", "Архив заказов"],
+    ["/supply", "⚙", "Снабжение и запчасти"],
+  ],
+  money: [
+    ["/analytics", "▥", "Аналитика"],
+  ],
+  manage: [
+    ["/settings", "⚙", "Настройки"],
+    ["/assistant", "✧", "ИИ-помощник"],
+    ["/automation", "⟳", "Автоматизация"],
+    ["/online-booking", "▣", "Онлайн-запись"],
+    ["/integrations", "⌘", "Интеграции"],
+  ],
+};
+
+const routeArea: Record<string, string> = {
+  today: "today", work: "work", tasks: "work", schedule: "work", archive: "work",
+  supply: "work", clients: "clients", money: "money", analytics: "money",
+  manage: "manage", settings: "manage", assistant: "manage", automation: "manage",
+  "online-booking": "manage", integrations: "manage",
+};
 
 export function AppShell({ children, active, tenantName, role, currency = "BYN", timezone = "Europe/Minsk" }: {
   children: ReactNode; active: string; tenantName: string; role: string; currency?: string; timezone?: string;
 }) {
+  const area = routeArea[active] ?? active;
+  const secondaryItems = secondary[area] ?? [];
   return <div className="app-shell">
     <aside className="sidebar">
-      <Link href="/today" className="brand-lockup"><span className="brand-mark">S</span><span><b>STO.Flow</b><small>WORKSHOP OS · 6.0</small></span></Link>
+      <Link href="/today" className="brand-lockup"><span className="brand-mark">S</span><span><b>STO.Flow</b><small>WORKSHOP OS · 5.7 UX</small></span></Link>
       <div className="workspace-chip"><span className="workspace-dot"/><span><small>РАБОЧЕЕ ПРОСТРАНСТВО</small><b>{tenantName}</b></span></div>
-      {groups.map(group => <div className="nav-group" key={group.label}><div className="nav-label">{group.label}</div><nav className="nav">{group.items.map(([href, icon, label, key]) => <Link key={href} href={href} className={active === key ? "active" : ""}><span className="nav-icon">{icon}</span><span>{label}</span></Link>)}</nav></div>)}
+      {groups.map(group => <div className="nav-group" key={group.label}><div className="nav-label">{group.label}</div><nav className="nav">{group.items.map(([href, icon, label, key]) => <Link key={href} href={href} className={area === key ? "active" : ""}><span className="nav-icon">{icon}</span><span>{label}</span></Link>)}</nav></div>)}
+      {secondaryItems.length > 0 ? <div className="nav-subgroup">
+        <div className="nav-label">РАЗДЕЛЫ</div>
+        <nav className="nav nav-secondary">{secondaryItems.map(([href, icon, label]) => <Link key={href} href={href} className={active === href.slice(1) ? "active" : ""}><span className="nav-icon">{icon}</span><span>{label}</span></Link>)}</nav>
+      </div> : null}
       <div className="sidebar-bottom"><div className="user-avatar">{role === "owner" ? "В" : "С"}</div><div className="user-meta"><b>{roleLabel(role)}</b><small>{currency} · {timezone}</small></div><span className="online-dot" title="Рабочее пространство"/><form action={signOut}><button className="side-logout" title="Выйти" aria-label="Выйти">↪</button></form></div>
     </aside>
     <main className="main-area">
-      <header className="topbar"><div className="topbar-left"><span className="status-pill"><i/>Система активна</span><span className="topbar-divider"/> <span className="topbar-context">Операционное пространство</span></div><div className="topbar-right"><span className="topbar-date">{formatInTimeZone(new Date(), timezone, { dateStyle: "medium" })}</span><span className="topbar-avatar">{tenantName.slice(0,1).toUpperCase()}</span></div></header>
+      <header className="topbar"><div className="topbar-left"><span className="status-pill"><i/>Система активна</span><span className="topbar-divider"/> <span className="topbar-context">{areaLabel(area)}</span></div><div className="topbar-right"><span className="topbar-date">{formatInTimeZone(new Date(), timezone, { dateStyle: "medium" })}</span><span className="topbar-avatar">{tenantName.slice(0,1).toUpperCase()}</span></div></header>
       <div className="page-content">{children}</div>
-      <footer className="app-footer"><span>STO.Flow 6.0 · рабочая версия</span><span>Данные из Supabase · изоляция по организациям</span></footer>
+      <footer className="app-footer"><span>STO.Flow · интерфейс по эталону 5.7</span><span>Данные из Supabase · изоляция по организациям</span></footer>
     </main>
   </div>;
+}
+
+function areaLabel(area: string) {
+  const labels: Record<string,string> = { today: "Рабочий день", work: "Операционная работа", clients: "Клиентская база", money: "Финансы и аналитика", manage: "Управление сервисом" };
+  return labels[area] ?? "Рабочее пространство";
 }
 
 export function roleLabel(role: string) {
