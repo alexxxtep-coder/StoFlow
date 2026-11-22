@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireMembership } from "@/lib/auth/context";
 import { hasDecimalPrecision } from "@/domain/precision.mjs";
+import { localDateTimeToIso } from "@/domain/timezone.mjs";
 
 const RequestSchema = z.object({
   orderId: z.string().uuid(), description: z.string().trim().min(2).max(240),
@@ -36,14 +37,15 @@ const OfferSchema = z.object({
   title: z.string().trim().min(2).max(160), brand: z.string().trim().max(80).optional().default(""),
   sku: z.string().trim().max(80).optional().default(""),
   price: z.string().trim().optional().default(""), availability: z.enum(["unknown","in_stock","limited","backorder","out_of_stock"]),
-  fitment: z.enum(["unverified","confirmed","probable","not_fit"])
+  fitment: z.enum(["unverified","confirmed","probable","not_fit"]),
+  etaAt: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional().default("")
 });
 
 export async function addManualOffer(formData: FormData) {
   const parsed = OfferSchema.safeParse({
     requestId: formData.get("requestId"), supplier: formData.get("supplier"), title: formData.get("title"),
     brand: formData.get("brand") || "", sku: formData.get("sku") || "", price: formData.get("price") || "",
-    availability: formData.get("availability"), fitment: formData.get("fitment")
+    availability: formData.get("availability"), fitment: formData.get("fitment"), etaAt: formData.get("etaAt") || ""
   });
   if (!parsed.success) throw new Error("Проверьте данные предложения.");
   const price = parsed.data.price ? parsed.data.price.replace(",", ".") : null;
@@ -55,7 +57,7 @@ export async function addManualOffer(formData: FormData) {
     p_supplier_name: parsed.data.supplier, p_title: parsed.data.title,
     p_brand: parsed.data.brand || null, p_sku: parsed.data.sku || null,
     p_purchase_price: price, p_currency: ctx.tenant.currency,
-    p_availability: parsed.data.availability, p_eta_at: null, p_fitment_status: parsed.data.fitment
+    p_availability: parsed.data.availability, p_eta_at: parsed.data.etaAt ? localDateTimeToIso(`${parsed.data.etaAt}T12:00`, ctx.tenant.timezone) : null, p_fitment_status: parsed.data.fitment
   });
   if (error) throw new Error(error.message);
   revalidatePath("/supply");
